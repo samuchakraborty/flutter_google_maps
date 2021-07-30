@@ -4,6 +4,7 @@ import 'package:flutter_google_maps_task/screens/MapScreen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
