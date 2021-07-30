@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
       this.onPressed,
       this.icon,
         this.initialValue,
+        this.controller,
       this.obscureTextTy = false});
 
   final String labelName;
@@ -27,7 +28,8 @@ class CustomTextField extends StatelessWidget {
   final int? limit;
   final Function()? onPressed;
   final IconData? icon;
-  final bool obscureTextTy;
+  final bool? obscureTextTy;
+  final TextEditingController?  controller;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         TextFormField(
+          controller: controller,
           initialValue:initialValue ,
             keyboardType: textInputType,
             // autofocus: true,
@@ -61,18 +64,10 @@ class CustomTextField extends StatelessWidget {
               ),
               //isDense: true,                      // Added this
               //  contentPadding: EdgeInsets.all(15),
-              suffixIcon: TextButton(
-                //icon: Icon(icon),
 
-                onPressed: onPressed,
-                child: Text(
-                  textButtonName!,
-                  style: TextStyle(color: Colors.orange, fontSize: 17),
-                ),
-              ),
             ),
             onChanged: onChangedFunction,
-            obscureText: obscureTextTy,
+            obscureText: obscureTextTy!,
             validator: validateFunction,
             inputFormatters: [
               LengthLimitingTextInputFormatter(limit),

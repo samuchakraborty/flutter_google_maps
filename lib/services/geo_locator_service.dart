@@ -5,4 +5,10 @@ class GeoLocatorService {
     return await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }
+
+
+
 }
+
+
+

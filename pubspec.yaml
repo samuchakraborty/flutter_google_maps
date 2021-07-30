@@ -16,6 +16,9 @@ dependencies:
   geolocator: ^7.3.1
   http: ^0.13.3
   provider: ^5.0.0
+  flutter_polyline_points: ^1.0.0
+  geocoding: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:
