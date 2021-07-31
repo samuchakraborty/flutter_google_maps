@@ -17,7 +17,6 @@ final dataStoreChangeNotifier = ChangeNotifierProvider<DataRepo>((_ref) {
   return DataRepo();
 });
 
-
 class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -119,274 +118,266 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ShowData()),
-                );
-              },
-              icon: Icon(
-                Icons.add,
-                size: 40,
-              ))
-        ],
-      ),
-      body: Consumer(builder: (BuildContext context, watch, child) {
-        final applicationBloc = watch(numberChangeNotifier);
-        final dataStore = watch(dataStoreChangeNotifier);
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Save Address'),
+          centerTitle: true,
+          // actions: [
+          //   IconButton(
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (context) => ShowData()),
+          //         );
+          //       },
+          //       icon: Icon(
+          //         Icons.add,
+          //         size: 40,
+          //       ))
+          // ],
+        ),
+        body: Consumer(builder: (BuildContext context, watch, child) {
+          final applicationBloc = watch(numberChangeNotifier);
+          final dataStore = watch(dataStoreChangeNotifier);
 
-        return ListView(
-          shrinkWrap: true,
-          children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 2.2,
-                  child: GoogleMap(
-                    onMapCreated: onMapCreate,
-                    mapType: MapType.normal,
-                    onTap: handleTap,
-                    markers: Set.from(marker),
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.2,
+                    child: GoogleMap(
+                      onMapCreated: onMapCreate,
+                      mapType: MapType.normal,
+                      onTap: handleTap,
+                      markers: Set.from(marker),
 
-                    gestureRecognizers: Set()
-                      ..add(Factory<PanGestureRecognizer>(
-                          () => PanGestureRecognizer()))
-                      ..add(
-                        Factory<VerticalDragGestureRecognizer>(
-                            () => VerticalDragGestureRecognizer()),
-                      )
-                      ..add(
-                        Factory<HorizontalDragGestureRecognizer>(
-                            () => HorizontalDragGestureRecognizer()),
-                      )
-                      ..add(
-                        Factory<ScaleGestureRecognizer>(
-                            () => ScaleGestureRecognizer()),
-                      ),
-
-                    onCameraMove: (position) {
-                      setState(() {
-                        marker = [];
-                        print(position.target);
-                        getCurrentAddress(
-                            latitude: position.target.latitude,
-                            longitude: position.target.longitude);
-
-                        marker.add(Marker(
-                            infoWindow: InfoWindow(
-                              title:
-                                  'latitude: ${position.target.latitude}, longitude: ${position.target.longitude}',
-                            ),
-                            markerId: MarkerId(position.target.toString()),
-                            draggable: false,
-                            position: position.target));
-                      });
-                    },
-                    initialCameraPosition: _initialCameraPosition,
-                    //zoomControlsEnabled: false,
-                    // myLocationButtonEnabled: true,
-                    // myLocationEnabled: true,
-                  ),
-                ),
-                Positioned(
-                  right: 15,
-                  left: 15,
-                  top: 30,
-                  child: Container(
-                    height: 50,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white),
-                    child: TextFormField(
-                      style: new TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                          fontSize: 20),
-                      decoration: InputDecoration(
-                        hintText: "Enter city Name",
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                            left: 15, right: 15, top: 15, bottom: 15),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.search),
-                          onPressed: searchNavigated,
-                          iconSize: 30,
+                      gestureRecognizers: Set()
+                        ..add(Factory<PanGestureRecognizer>(
+                            () => PanGestureRecognizer()))
+                        ..add(
+                          Factory<VerticalDragGestureRecognizer>(
+                              () => VerticalDragGestureRecognizer()),
+                        )
+                        ..add(
+                          Factory<HorizontalDragGestureRecognizer>(
+                              () => HorizontalDragGestureRecognizer()),
+                        )
+                        ..add(
+                          Factory<ScaleGestureRecognizer>(
+                              () => ScaleGestureRecognizer()),
                         ),
-                      ),
-                      onChanged: (val) {
+
+                      onCameraMove: (position) {
                         setState(() {
-                          searchAddress = val;
+                          marker = [];
+                          print(position.target);
+                          getCurrentAddress(
+                              latitude: position.target.latitude,
+                              longitude: position.target.longitude);
+
+                          marker.add(Marker(
+                              infoWindow: InfoWindow(
+                                title:
+                                    'latitude: ${position.target.latitude}, longitude: ${position.target.longitude}',
+                              ),
+                              markerId: MarkerId(position.target.toString()),
+                              draggable: false,
+                              position: position.target));
                         });
                       },
+                      initialCameraPosition: _initialCameraPosition,
+                      //zoomControlsEnabled: false,
+                      // myLocationButtonEnabled: true,
+                      // myLocationEnabled: true,
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
-              child: Container(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Form(
-                  key: _formKey,
-                  child: Container(
-                    width: 120,
-                    margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              // getCurrentAddress(
-                              //     latitude:
-                              //         applicationBloc.currentLocation!.latitude,
-                              //     longitude:
-                              //         applicationBloc.currentLocation!.longitude);
-
-                              handleTap(LatLng(
-                                  applicationBloc.currentLocation!.latitude,
-                                  applicationBloc.currentLocation!.longitude));
-                              getMyLocation(
-                                  latitude:
-                                      applicationBloc.currentLocation!.latitude,
-                                  longitude: applicationBloc
-                                      .currentLocation!.longitude);
-                            });
-                          },
-                          child: Text(
-                            "Use My Current Location",
-                            style: TextStyle(fontSize: 20),
+                  Positioned(
+                    right: 15,
+                    left: 15,
+                    top: 30,
+                    child: Container(
+                      height: 50,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white),
+                      child: TextFormField(
+                        style: new TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 20),
+                        decoration: InputDecoration(
+                          hintText: "Enter city Name",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, right: 15, top: 15, bottom: 15),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: searchNavigated,
+                            iconSize: 30,
                           ),
-                          // style: buttonStyleContinue,
                         ),
-                        CustomTextField(
-                          //  initialValue: currentAddress!,
-                          controller: _controller,
-                          labelName: "Your Location",
-                          onChangedFunction: (value) {},
-                          textInputType: TextInputType.text,
-                          hintTextName: '',
-                          textButtonName: "",
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextField(
-                          labelName: "Flat No",
-                          controller: _flatNoController,
-                          onChangedFunction: (value) {
-                            flatNo = value;
-                          },
-                          validateFunction: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Your Flat No';
-                            }
-                          },
-                          textInputType: TextInputType.text,
-                          hintTextName: '',
-                          textButtonName: '',
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextField(
-                          labelName: "Address Title",
-                          controller: _addressTitleController,
-                          onChangedFunction: (value) {
-                            addressTitle = value;
-                          },
-                          validateFunction: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Your Address Title';
-                            }
-                          },
-                          textInputType: TextInputType.text,
-                          hintTextName: '',
-                          textButtonName: '',
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            ///
-                            // print("hhh");
-                            // var s = List.generate(dataStore.dataRe.length, (i) {
-                            //   return StoreData(
-                            //       addressTitle:
-                            //           dataStore.dataRe[i].addressTitle,
-                            //       addressFromMap:
-                            //           dataStore.dataRe[i].addressFromMap,
-                            //       flatNo: dataStore.dataRe[i].flatNo);
-                            // });
-                            //
-                            // for (var i = 0; i < dataStore.dataRe.length; i++) {
-                            //   print(dataStore.dataRe[i].flatNo);
-                            // }
+                        onChanged: (val) {
+                          setState(() {
+                            searchAddress = val;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      //  width: 120,
+                      margin: EdgeInsets.only(left: 10, right: 10),
+                      child: Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                // getCurrentAddress(
+                                //     latitude:
+                                //         applicationBloc.currentLocation!.latitude,
+                                //     longitude:
+                                //         applicationBloc.currentLocation!.longitude);
 
-                            ///
-
-                            if (_formKey.currentState!.validate()) {
-                              await DBHelper().storeData(
-                                StoreData(
+                                handleTap(LatLng(
+                                    applicationBloc.currentLocation!.latitude,
+                                    applicationBloc
+                                        .currentLocation!.longitude));
+                                getMyLocation(
+                                    latitude: applicationBloc
+                                        .currentLocation!.latitude,
+                                    longitude: applicationBloc
+                                        .currentLocation!.longitude);
+                              });
+                            },
+                            child: Text(
+                              "Use My Current Location",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            style: buttonStyleUseLocation,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextField(
+                            //  initialValue: currentAddress!,
+                            controller: _controller,
+                            labelName: "Your Location",
+                            onChangedFunction: (value) {},
+                            textInputType: TextInputType.text,
+                            hintTextName: '',
+                            textButtonName: "",
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextField(
+                            labelName: "Flat No",
+                            controller: _flatNoController,
+                            onChangedFunction: (value) {
+                              flatNo = value;
+                            },
+                            validateFunction: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter Your Flat No';
+                              }
+                            },
+                            textInputType: TextInputType.text,
+                            hintTextName: '',
+                            textButtonName: '',
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextField(
+                            labelName: "Address Title",
+                            controller: _addressTitleController,
+                            onChangedFunction: (value) {
+                              addressTitle = value;
+                            },
+                            validateFunction: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter Your Address Title';
+                              }
+                            },
+                            textInputType: TextInputType.text,
+                            hintTextName: '',
+                            textButtonName: '',
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                await DBHelper().storeData(
+                                  StoreData(
+                                    addressTitle: addressTitle,
+                                    addressFromMap: _controller.text,
+                                    flatNo: flatNo,
+                                  ),
+                                );
+                                dataStore.add(StoreData(
                                   addressTitle: addressTitle,
                                   addressFromMap: _controller.text,
                                   flatNo: flatNo,
-                                ),
-                              );
-                              dataStore.add(StoreData(
-                                addressTitle: addressTitle,
-                                addressFromMap: _controller.text,
-                                flatNo: flatNo,
-                              ));
+                                ));
 
-                              dataStore.dataRe.forEach((element) {print(element.addressFromMap);});
+                                dataStore.dataRe.forEach((element) {
+                                  print(element.addressFromMap);
+                                });
 
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ShowData()),
+                                );
 
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(builder: (context) => ShowData()),
-                              // );
+                                _flatNoController.clear();
+                                _addressTitleController.clear();
 
-                              _flatNoController.clear();
-                              _addressTitleController.clear();
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Address is saved"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            }
-                          },
-                          child: Text(
-                            "SAVE ADDRESS",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          style: buttonStyleContinue,
-                        )
-                      ],
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Address is saved"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              "SAVE ADDRESS",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            style: buttonStyleContinue,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-          ],
-        );
-      }),
+              SizedBox(
+                height: 30,
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 }

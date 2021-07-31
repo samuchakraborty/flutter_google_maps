@@ -112,21 +112,23 @@ class _ShowDataState extends State<ShowData> {
   @override
   Widget build(BuildContext context) {
     //showData();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("show data"),
-      ),
-      body: Consumer(builder: (BuildContext context, watch, child) {
-       final dataStore = watch(dataStoreChangeNotifier);
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("show data"),
+        ),
+        body: Consumer(builder: (BuildContext context, watch, child) {
+         final dataStore = watch(dataStoreChangeNotifier);
 
-       if (dataStore.dataRe.isEmpty) {
-          return Container(
-            child: list(),
-          );
-       }
+         if (dataStore.dataRe.isEmpty) {
+            return Container(
+              child: list(),
+            );
+         }
 
-          return dataTable(dataStore.dataRe, context);
-      }
-    ),);
+            return dataTable(dataStore.dataRe, context);
+        }
+      ),),
+    );
   }
 }

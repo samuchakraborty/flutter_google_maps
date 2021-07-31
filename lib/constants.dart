@@ -19,12 +19,15 @@ ButtonStyle buttonStyleContinue = ButtonStyle(
 
 
 
-ButtonStyle buttonStyleSuffix = ButtonStyle(
+
+
+
+ButtonStyle buttonStyleUseLocation = ButtonStyle(
   backgroundColor: MaterialStateProperty.all(Colors.orange.shade800),
   fixedSize: MaterialStateProperty.all(
     Size(
-      80,
-      60,
+      300,
+      40,
     ),
   ),
   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
