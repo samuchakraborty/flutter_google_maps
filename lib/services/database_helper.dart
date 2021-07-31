@@ -40,16 +40,16 @@ class DBHelper {
   Future storeData(StoreData user) async {
     var dbClient = await db;
     int id = await dbClient.insert(USER_STORE_TABLE, user.toStore());
-    print(id);
+  //  print(id);
     return id;
   }
 
-  Future<List<StoreData>?> getAllStoreDataById() async {
+  Future<List<StoreData>?> getAllStoreData() async {
     var dbClient = await db;
 
     var result =
         await dbClient.query(USER_STORE_TABLE);
-    print(result);
+//    print(result);
 
     List<StoreData>? list = result.isNotEmpty
         ? result.map((c) => StoreData.fromMap(c)).toList()
@@ -58,36 +58,7 @@ class DBHelper {
     return list;
   }
 
-  Future<List<StoreData>> getAllUser() async {
-    var dbClient = await db;
-    List<Map<String, dynamic>> mapss = await dbClient.query(USER_STORE_TABLE,
-        columns: [
-          STORE_ID,
-          STORE_ADDRESS_FROM_MAP,
-          STORE_ADDRESS_TITLE,
-          STORE_FLAT_NO
-        ]);
-    return List.generate(mapss.length, (i) {
-      return StoreData(
-          id: mapss[i]['id'],
-          addressTitle: mapss[i]['address_title'],
-          addressFromMap: mapss[i]['address_from_map'],
-          flatNo: mapss[i]['flat_no']);
-    });
 
-    // return user;
-  }
-
-  // Future<int> delete(int id) async {
-  //   var dbClient = await db;
-  //   return await dbClient.delete(USER_TABLE, where: '$ID = ?', whereArgs: [id]);
-  // }
-
-  // Future<int> update(User employee) async {
-  //   var dbClient = await db;
-  //   return await dbClient.update(USER_TABLE, employee.toMap(),
-  //       where: '$ID = ?', whereArgs: [employee.id]);
-  // }
 
   Future close() async {
     var dbClient = await db;

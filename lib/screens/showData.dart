@@ -1,84 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_maps_task/model/store_data_model.dart';
+import 'package:flutter_google_maps_task/screens/MapScreen.dart';
 import 'package:flutter_google_maps_task/services/database_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ShowData extends StatelessWidget {
+class ShowData extends StatefulWidget {
+
+  @override
+  _ShowDataState createState() => _ShowDataState();
+}
+
+class _ShowDataState extends State<ShowData> {
   late Future<List<StoreData>?> listOfStoreData;
 
-  void showData() {
-    listOfStoreData =  DBHelper().getAllStoreDataById();
+  @override
+  void initState() {
+    // TODO: implement initState
+    listOfStoreData = DBHelper().getAllStoreData();
 
-    print(listOfStoreData);
+    super.initState();
+
   }
 
-
-
   Widget dataTable(List<StoreData> storeData, context) {
-    return
-
-      FittedBox(
-             child: ConstrainedBox(
-          constraints:
-         BoxConstraints(minWidth: MediaQuery.of(context).size.width - 10),
-          child: DataTable(
-            columns: [
-              DataColumn(
-                label: Container(child: Text('id')),
-              ),
-              DataColumn(
-                label: Container(
+    return FittedBox(
+      child: ConstrainedBox(
+        constraints:
+            BoxConstraints(minWidth: MediaQuery.of(context).size.width - 10),
+        child: DataTable(
+          columns: [
+            // DataColumn(
+            //   label: Container(child: Text('id')),
+            // ),
+            DataColumn(
+              label: Container(
                   //  width: MediaQuery.of(context).size.width / 14,
-                    child: Text('AddressFromMap')),
-              ),
-              DataColumn(
-                label: Container(child: Text('Address Title')),
-              ),
-              DataColumn(
-                label: Container(child: Text('Flat No')),
-              ),
+                  child: Text('AddressFromMap')),
+            ),
+            DataColumn(
+              label: Container(child: Text('Address Title')),
+            ),
+            DataColumn(
+              label: Container(child: Text('Flat No')),
+            ),
+          ],
+          rows: storeData
+              .map(
+                (element) => DataRow(cells: [
+                  // DataCell(
+                  //   Container(
+                  //     child: Text(
+                  //       element.id.toString(),
+                  //     ),
+                  //   ),
+                  // ),
+                  DataCell(
+                    Container(
+                      child: Text(
+                        element.addressFromMap.toString(),
+                        maxLines: 5,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Container(
+                      child: Text(
+                        element.addressTitle.toString(),
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Container(
+                      child: Text(element.flatNo.toString()
 
-            ],
-            rows: storeData.reversed
-                .map(
-                  (element) => DataRow(cells: [
-                DataCell(
-                  Container(
-                    child: Text(
-                      element.id.toString(),
+                          //maxLines: 5,
+                          ),
                     ),
                   ),
-                ),
-                DataCell(
-                  Container(
-                    child: Text(
-                      element.addressFromMap.toString(),
-                      maxLines: 5,
-                    ),
-                  ),
-                ),
-                DataCell(
-                  Container(
-                    child: Text(
-                      element.addressTitle.toString(),
-                    ),
-                  ),
-                ),
-                DataCell(
-                  Container(
-                    child: Text(
-                      element.flatNo.toString()
-
-                      //maxLines: 5,
-                    ),
-                  ),
-                ),
-
-              ]),
-            )
-                .toList(),
-          ),
+                ]),
+              )
+              .toList(),
         ),
-      );
+      ),
+    );
     //  );
     //,
     // );
@@ -90,7 +94,7 @@ class ShowData extends StatelessWidget {
         future: listOfStoreData,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return dataTable(snapshot.data , context);
+            return dataTable(snapshot.data, context);
           }
 
           if (null == snapshot.data || snapshot.data.length == 0) {
@@ -105,24 +109,24 @@ class ShowData extends StatelessWidget {
 
 
 
-
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    showData();
+    //showData();
     return Scaffold(
       appBar: AppBar(
         title: Text("show data"),
       ),
-      body: Container(
+      body: Consumer(builder: (BuildContext context, watch, child) {
+       final dataStore = watch(dataStoreChangeNotifier);
 
-        child:  list(),
-      ),
-    );
+       if (dataStore.dataRe.isEmpty) {
+          return Container(
+            child: list(),
+          );
+       }
+
+          return dataTable(dataStore.dataRe, context);
+      }
+    ),);
   }
 }
