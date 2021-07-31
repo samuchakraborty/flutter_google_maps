@@ -354,7 +354,9 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
-
+          SizedBox(
+            height: 30,
+          ),
         ],
       ),
     );
